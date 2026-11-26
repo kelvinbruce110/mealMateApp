@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MealMate — high-protein meal ideas with a Rwandan/East African lens, plus real nutrition label checks.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2356e39f'/%3E%3Ctext x='32' y='44' font-size='38' font-family='sans-serif' font-weight='bold' text-anchor='middle' fill='%2307101a'%3EM%3C/text%3E%3C/svg%3E">
+  <title>MealMate — Eat well, wherever you are</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="MealMate home">
+        <span class="brand-mark">M</span>
+        <span>MealMate</span>
+      </a>
+      <nav class="tabs" aria-label="Main sections">
+        <button class="tab is-active" type="button" data-tab="recipes" aria-selected="true">Recipe finder</button>
+        <button class="tab" type="button" data-tab="labels" aria-selected="false">Label check</button>
+        <button class="tab" type="button" data-tab="saved" aria-selected="false">My list <span id="savedCount" class="pill-count">0</span></button>
+      </nav>
+      <div id="sourceStatus" class="source-status" aria-live="polite"></div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Built for everyday decisions</p>
+        <h1>Eat well, <span>wherever you are.</span></h1>
+        <p class="lede">Find high-protein meals inspired by East African staples, then check the real label of the food in your hand. Search, filter, sort, save and compare — all in one place.</p>
+        <div class="hero-actions">
+          <button type="button" class="btn primary" data-jump="recipes">Find a meal</button>
+          <button type="button" class="btn ghost" data-jump="labels">Check a label</button>
+        </div>
+      </div>
+      <div class="hero-card" aria-hidden="true">
+        <div class="hero-card-top"><span class="dot green"></span> Protein cue</div>
+        <div class="hero-meter"><span></span></div>
+        <div class="hero-card-row"><span>Beans · eggs · chicken · peanuts</span><strong>High</strong></div>
+        <div class="hero-card-foot">Local staples, smarter choices</div>
+      </div>
+    </section>
+
+    <div id="alert" class="alert" role="alert" hidden>
+      <span class="alert-icon">!</span>
+      <div class="alert-body">
+        <strong id="alertTitle">Something went wrong</strong>
+        <p id="alertMessage"></p>
+      </div>
+      <button type="button" id="retryBtn" class="btn small">Retry</button>
+      <button type="button" id="dismissAlert" class="icon-btn" aria-label="Dismiss message">&times;</button>
+    </div>
+
+    <section id="panel-recipes" class="panel is-active" aria-labelledby="recipesHeading">
+      <div class="panel-head">
+        <div>
+          <h2 id="recipesHeading">Recipe finder</h2>
+          <p class="sub">Powered by TheMealDB. The local preset uses Kenyan recipes and ingredients common in Rwandan kitchens.</p>
+        </div>
+      </div>
+
+      <form id="recipeForm" class="searchbar">
+        <label class="sr-only" for="recipeQuery">Search meals by name</label>
+        <input id="recipeQuery" type="search" maxlength="80" placeholder="Search a meal — e.g. chicken, curry, sukuma" autocomplete="off">
+        <button type="submit" class="btn primary">Search</button>
+      </form>
+
+      <div class="filters">
+        <label>Region
+          <select id="areaFilter"><option value="">All regions</option></select>
+        </label>
+        <label>Category
+          <select id="categoryFilter"><option value="">All categories</option></select>
+        </label>
+        <label>Main ingredient
+          <select id="ingredientFilter"><option value="">Any ingredient</option></select>
+        </label>
+        <label>Sort
+          <select id="mealSort">
+            <option value="relevance">Relevance</option>
+            <option value="protein">Protein cue: high first</option>
+            <option value="name">Name: A–Z</option>
+          </select>
+        </label>
+        <label class="check"><input id="proteinOnly" type="checkbox"> High-protein cues only</label>
+        <button type="button" id="resetRecipes" class="btn small ghost">Reset</button>
+      </div>
+
+      <div class="result-meta">
+        <span id="recipeLabel">Loading meals…</span>
+        <span id="recipeCount" class="count-badge">0 results</span>
+      </div>
+      <div id="recipeGrid" class="grid" aria-live="polite"></div>
+      <div id="recipeEmpty" class="empty" hidden>
+        <div class="empty-icon">🍽️</div>
+        <h3>No meals found</h3>
+        <p>Try a different name or remove a filter.</p>
+      </div>
+    </section>
+
+    <section id="panel-labels" class="panel" aria-labelledby="labelsHeading" hidden>
+      <div class="panel-head">
+        <div>
+          <h2 id="labelsHeading">Label check</h2>
+          <p class="sub">Real nutrition data per 100 g from Open Food Facts. Search by food name or look up an exact barcode.</p>
+        </div>
+      </div>
+
+      <form id="productForm" class="searchbar">
+        <label class="sr-only" for="productQuery">Search food products</label>
+        <input id="productQuery" type="search" maxlength="80" placeholder="Search a food — e.g. peanut butter, yoghurt, beans" autocomplete="off">
+        <button type="submit" class="btn primary">Search labels</button>
+      </form>
+
+      <form id="barcodeForm" class="barcodebar">
+        <label for="barcodeInput">Barcode</label>
+        <input id="barcodeInput" inputmode="numeric" pattern="[0-9]{8,18}" maxlength="18" placeholder="e.g. 3017620422003">
+        <button type="submit" class="btn ghost">Look up exact product</button>
+        <span class="hint">Try 3017620422003 (Nutella) or 5449000000996 (Coca-Cola).</span>
+      </form>
+
+      <div class="filters">
+        <label>Min protein (g/100 g)
+          <input id="minProtein" type="number" min="0" max="100" step="1" value="0">
+        </label>
+        <label>Max sugar (g/100 g)
+          <input id="maxSugar" type="number" min="0" max="100" step="1" placeholder="Any">
+        </label>
+        <label>Worst Nutri-Score
+          <select id="maxGrade">
+            <option value="">Any</option>
+            <option value="a">A only</option>
+            <option value="b">Up to B</option>
+            <option value="c">Up to C</option>
+            <option value="d">Up to D</option>
+            <option value="e">Any (E)</option>
+          </select>
+        </label>
+        <label>Max NOVA group
+          <select id="maxNova">
+            <option value="">Any</option>
+            <option value="1">1 — unprocessed</option>
+            <option value="2">2 — ingredients</option>
+            <option value="3">3 — processed</option>
+            <option value="4">4 — ultra-processed</option>
+          </select>
+        </label>
+        <label>Sort
+          <select id="productSort">
+            <option value="relevance">Relevance</option>
+            <option value="protein">Protein: high first</option>
+            <option value="sugar">Sugar: low first</option>
+            <option value="calories">Calories: low first</option>
+            <option value="name">Name: A–Z</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="result-meta">
+        <span id="productLabel">Search for a food to begin.</span>
+        <span id="productCount" class="count-badge">0 results</span>
+      </div>
+      <div id="productGrid" class="grid" aria-live="polite"></div>
+      <div id="productEmpty" class="empty" hidden>
+        <div class="empty-icon">🏷️</div>
+        <h3>No matching labels</h3>
+        <p>Loosen a filter or try a broader food name.</p>
+      </div>
+    </section>
+
+    <section id="panel-saved" class="panel" aria-labelledby="savedHeading" hidden>
+      <div class="panel-head">
+        <div>
+          <h2 id="savedHeading">My list</h2>
+          <p class="sub">Saved in this browser only. Tick up to three items to compare them side by side.</p>
+        </div>
+        <div class="saved-actions">
+          <button type="button" id="compareBtn" class="btn primary">Compare selected</button>
+          <button type="button" id="clearSaved" class="btn ghost">Clear all</button>
+        </div>
+      </div>
+      <div id="savedGrid" class="grid"></div>
+      <div id="savedEmpty" class="empty" hidden>
+        <div class="empty-icon">⭐</div>
+        <h3>Nothing saved yet</h3>
+        <p>Use the star on any meal or product card to add it here.</p>
+      </div>
+      <div id="compareArea" class="compare-area" hidden></div>
+    </section>
+  </main>
+
+  <dialog id="detailDialog" class="dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow" id="dialogKicker">Recipe</p>
+        <h2 id="dialogTitle"></h2>
+      </div>
+      <button type="button" id="closeDialog" class="icon-btn" aria-label="Close details">&times;</button>
+    </div>
+    <div id="dialogBody" class="dialog-body"></div>
+  </dialog>
+
+  <footer class="footer">
+    <div>
+      <strong>MealMate</strong> — a student project for practical, data-driven food choices.
+    </div>
+    <div class="credits">
+      Recipe data by <a href="https://www.themealdb.com/api.php" target="_blank" rel="noopener noreferrer">TheMealDB</a> ·
+      Nutrition data by <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts</a>
+      and <a href="https://search.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Search-a-licious</a> (ODbL).
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
