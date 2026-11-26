@@ -1,0 +1,22 @@
+{
+  "name": "mealmate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "High-protein meal planner with a Rwandan/East African lens, plus real nutrition label checks.",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.0"
+  }
+}

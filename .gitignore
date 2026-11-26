@@ -1,0 +1,28 @@
+# Node dependencies and build output
+node_modules/
+coverage/
+dist/
+
+# Secrets and local configuration
+.env
+*.env.local
+secrets.json
+
+# Test / tooling caches
+.pytest_cache/
+__pycache__/
+
+# Local virtual environments left from the earlier Python version
+.venv/
+venv/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
